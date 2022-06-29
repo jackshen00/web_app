@@ -1,0 +1,51 @@
+package snowflake
+
+import (
+	"fmt"
+	"time"
+
+	"github.com/sony/sonyflake"
+)
+
+var (
+	sonyFlake2     *sonyflake.Sonyflake
+	sonyMachineID2 uint16
+)
+
+func getMachineID2() (uint16, error) {
+	return sonyMachineID2, nil
+}
+
+func Init2(startTime string, machineId uint16) (err error) {
+	sonyMachineID2 = machineId
+	var st time.Time
+	st, err = time.Parse("2006-01-02", startTime)
+	if err != nil {
+		return err
+	}
+	settings := sonyflake.Settings{
+		StartTime: st,
+		MachineID: getMachineID2,
+	}
+	sonyFlake2 = sonyflake.NewSonyflake(settings)
+	return
+}
+
+func GenID2() (id uint64, err error) {
+	if sonyFlake2 == nil {
+		err = fmt.Errorf("sony flake not inited")
+		return
+	}
+	id, err = sonyFlake2.NextID()
+	return
+}
+
+//func main() {
+//	err := Init2("2020-07-01", 1)
+//	if err != nil {
+//		fmt.Printf("Init failed, err:%v\n", err)
+//		return
+//	}
+//	id, _ := GenID2()
+//	fmt.Println(id)
+//}
